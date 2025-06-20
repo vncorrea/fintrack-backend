@@ -1,39 +1,28 @@
 import { Request, Response } from "express";
 import * as AuthService from "../services/auth.service";
+import { LoginDto, RegisterDto, LoginResponseDto, RegisterResponseDto } from "../dtos/auth.dto";
 
-export async function login(req: Request, res: Response) {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    res.status(400).json({ message: "Todos os campos são obrigatórios" });
-    return;
-  }
-
+export async function login(
+  req: Request<{}, {}, LoginDto>, 
+  res: Response<LoginResponseDto | { message: string }>
+) {
   try {
-    const user = await AuthService.login({ email, password });
-
-    res.status(200).json(user);
+    const result: LoginResponseDto = await AuthService.login(req.body);
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ message: (error as Error).message });
-    return;
   }
 }
 
-export async function register(req: Request, res: Response) {
-  const { name, email, password } = req.body;
-
-  if (!name || !email || !password) {
-    res.status(400).json({ message: "Todos os campos são obrigatórios" });
-    return;
-  }
-
+export async function register(
+  req: Request<{}, {}, RegisterDto>, 
+  res: Response<RegisterResponseDto | { message: string }>
+) {
   try {
-    const user = await AuthService.register({ name, email, password });
-
-    res.status(201).json(user);
+    const result: RegisterResponseDto = await AuthService.register(req.body);
+    res.status(201).json(result);
   } catch (error) {
     res.status(400).json({ message: (error as Error).message });
-    return;
   }
 }
 
